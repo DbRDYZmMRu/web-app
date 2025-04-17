@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Music & Poetry App</title>
+</head>
+
+<body v-scope="store">
+  
+  <header>
+    <h1>Music & Poetry App</h1>
+    <nav>
+      <button @click="path('/')">Home</button>
+      <button @click="path('/music')">Music</button>
+      <button @click="path('/poetry')">Poetry</button>
+      <button @click="path('/books')">Books</button>
+      <button @click="path('/login')">Login</button>
+    </nav>
+  </header>
+  <main>
+    <div v-if="store.route === 'home'">
+      <h2>Welcome to the Home Page</h2>
+    </div>
+    <div v-if="store.route === 'music'">
+      <h2>Music Section</h2>
+    </div>
+    <div v-if="store.route === 'poetry'">
+      <h2>Poetry Section</h2>
+    </div>
+    <div v-if="store.route === 'books'">
+      <h2>Books Section</h2>
+    </div>
+    <div v-if="store.route === 'login'">
+      <h2>Login Page</h2>
+    </div>
+  </main>
+  
+  <p>{{store.someValue}} is okay</p>
+  <p>{{store}} is okay</p>
+  <input v-model="store.someValue" type="text" name="" id="" value="" />
+  
+  <p @click="store.getDate()">click here</p>
+  
+  
+  
+  <p>Main App: IP Access is {{ store.IPAccess ? 'Enabled' : 'Disabled' }}</p>
+  <p>{{ store.workPlan }}</p>
+  <p v-if="store.initialCountNo === 10">{{ store.initialCountNo }}</p>
+  <button @click="store.toggleIPAccess()">Toggle IP Access</button>
+  <div v-scope="Counter({ initialCount: initialCountNo })"></div>
+  
+  <script type="module" src="./pageModel.js"></script>
+  
+  <template id="counter-template">
+    My count is {{ count }}
+    <button @click="inc">++</button>
+  </template>
+</body>
+
+</html>
