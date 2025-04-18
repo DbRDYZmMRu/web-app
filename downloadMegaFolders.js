@@ -1,6 +1,5 @@
 const fs = require('fs');
-const path = require('path');
-const mega = require('megajs');
+const path = require { File } = require('megajs'); // Import the File class from megajs
 
 // Folder links and decryption keys
 const folders = [
@@ -13,7 +12,7 @@ const folders = [
 ];
 
 // Directory to store downloaded files
-const MP3_DIR = path.join(__dirname, 'mp3'); // Directory is named "mp3"
+const MP3_DIR = path.join(__dirname, 'mp3');
 
 // Ensure the mp3 directory exists
 if (!fs.existsSync(MP3_DIR)) {
@@ -51,12 +50,12 @@ const processFolder = async (folder, subfolderName) => {
     fs.mkdirSync(subfolderPath);
   }
 
-  for (const child of folder.children || []) {
-    const filePath = path.join(subfolderPath, child.name);
+  for (const [name, child] of Object.entries(folder.children || {})) {
+    const filePath = path.join(subfolderPath, name);
 
     if (child.directory) {
       // If it's a subfolder, recursively process it
-      await processFolder(child, path.join(subfolderName, child.name));
+      await processFolder(child, path.join(subfolderName, name));
     } else {
       // If it's a file, download it
       await downloadFile(child, filePath);
@@ -69,7 +68,7 @@ const main = async () => {
   for (const { id, link, key } of folders) {
     try {
       const folderURL = `${link}#${key}`;
-      const folder = mega.folder({ url: folderURL });
+      const folder = File.fromURL(folderURL);
 
       // Load folder attributes
       await new Promise((resolve, reject) => {
