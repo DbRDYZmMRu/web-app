@@ -28,11 +28,11 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      # Step 4: Clean and install dependencies
-      - name: Clean and install dependencies
+      # Step 4: Install dependencies
+      - name: Install dependencies
         run: |
           npm install -g npm@latest
-          npm ci
+          npm install
 
       # Step 5: Update package.json with required dependencies
       - name: Update package.json
@@ -57,6 +57,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m 'Update Google Drive script dependencies and output'
+            git commit -m 'Add package-lock.json for CI compatibility'
             git push origin HEAD:main
           fi
