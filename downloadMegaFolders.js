@@ -1,5 +1,6 @@
 const fs = require('fs');
-const path = require { File } = require('megajs'); // Import the File class from megajs
+const path = require('path');
+const { File } = require('megajs'); // Correct import of the File class
 
 // Folder links and decryption keys
 const folders = [
