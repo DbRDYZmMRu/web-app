@@ -32,7 +32,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm install -g npm@latest
-          npm ci
+          npm install
 
       # Step 5: Update package.json with required dependencies
       - name: Update package.json
