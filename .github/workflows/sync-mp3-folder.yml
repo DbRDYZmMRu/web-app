@@ -36,14 +36,14 @@ jobs:
             echo "mp3 does not exist in source-repo."
           fi
 
-      # Step 4: Copy Specific Folder to freshPlayer
+      # Step 4: Copy mp3 Folder to freshPlayer
       - name: Copy mp3 to freshPlayer
         run: |
-          mkdir -pActivity freshPlayer
+          mkdir -p freshPlayer
           if [ -d "source-repo/mp3" ]; then
-            cp -R source-repo/mp3/* freshPlayer/ || echo "No content to copy in mp3."
+            cp -R source-repo/mp3 freshPlayer/ || echo "No content to copy in mp3 folder."
           else
-            echo "mp3 not found in source-repo. Skipping copy."
+            echo "mp3 folder not found in source-repo. Skipping copy."
             exit 1
           fi
 
@@ -62,6 +62,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m 'Sync mp3 to freshPlayer folder from source repository'
+            git commit -m 'Sync mp3 folder to freshPlayer from source repository'
             git push origin main
           fi
