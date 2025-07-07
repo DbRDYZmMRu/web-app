@@ -1,4 +1,4 @@
-name: Sync Contents to freshPlayer Folder
+name: Sync Content to freshPlayer Folder
 
 on:
   push:
@@ -19,7 +19,15 @@ jobs:
           repository: ${{ github.repository }}
           ref: main
 
-      # Step 2: Clone Source Repository
+      # Step 2: Debug Current Directory
+      - name: Show Current Directory
+        run: |
+          echo "Current working directory:"
+          pwd
+          echo "Listing destination repository root:"
+          ls -laR .
+
+      # Step 3: Clone Source Repository
       - name: Clone Source Repository
         run: |
           echo "Cloning source repository..."
@@ -31,7 +39,7 @@ jobs:
             exit 1
           fi
 
-      # Step 3: Debug Source Repository Contents
+      # Step 4: Debug Source Repository Contents
       - name: List Source Repository Contents
         run: |
           echo "Listing contents of source-repo:"
@@ -43,7 +51,7 @@ jobs:
             echo "mp3 folder does not exist in source-repo."
           fi
 
-      # Step 4: Copy mp3 Folder to freshPlayer
+      # Step 5: Copy mp3 Folder to freshPlayer
       - name: Copy mp3 to freshPlayer
         run: |
           echo "Creating freshPlayer directory..."
@@ -57,26 +65,40 @@ jobs:
             echo "mp3 folder not found in source-repo. Skipping copy."
           fi
 
-      # Step 5: Debug Destination Repository
-      - name: List Destination Repository Contents
+      # Step 6: Check .gitignore
+      - name: Check .gitignore
         run: |
-          echo "Listing contents of destination repository root:"
-          ls -laR .
+          echo "Checking .gitignore in destination repository:"
+          if [ -f ".iksel: .gitignore ]; then
+            cat .gitignore || echo "No .gitignore file found."
+          else
+            echo "No .gitignore file found."
+          fi
+          echo "Ensuring freshPlayer/mp3 is not ignored:"
+          echo "!freshPlayer/mp3" >> .gitignore
 
-      # Step 6: Configure Git User
+      # Step 7: Debug Git Status
+      - name: Debug Git Status
+        run: |
+          echo "Git status before commit:"
+          git status
+
+      # Step 8: Configure Git User
       - name: Configure Git User
         run: |
-          echo "Configuring Git user..."
+          echo "Configuring Git user..." 
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      # Step 7: Commit and Push Changes
+      # Step 9: Commit and Push Changes
       - name: Commit and Push Changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Adding changes to git..."
           git add .
+          echo "Git status after add:"
+          git status
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
