@@ -1,0 +1,67 @@
+name: Sync Content to freshPlayer Folder
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync_content:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      # Step 1: Checkout Target Repository
+      - name: Checkout Target Repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}
+          ref: main
+
+      # Step 2: Clone Source Repository
+      - name: Clone Source Repository
+        run: |
+          git clone https://github.com/DbRDYZmMRu/Ut67QIwioF.git source-repo || echo "Failed to clone source repo. Check URL."
+
+      # Step 3: Debug Source Repository Contents
+      - name: List Source Repository Contents
+        run: |
+          echo "Listing contents of source-repo:"
+          ls -la source-repo || echo "Source repository is empty or not cloned."
+          if [ -d "source-repo/mp3" ]; then
+            echo "mp3 exists in source-repo."
+            ls -la source-repo/mp3
+          else
+            echo "mp3 does not exist in source-repo."
+          fi
+
+      # Step 4: Copy Specific Folder to freshPlayer
+      - name: Copy mp3 to freshPlayer
+        run: |
+          mkdir -pActivity freshPlayer
+          if [ -d "source-repo/mp3" ]; then
+            cp -R source-repo/mp3/* freshPlayer/ || echo "No content to copy in mp3."
+          else
+            echo "mp3 not found in source-repo. Skipping copy."
+            exit 1
+          fi
+
+      # Step 5: Configure Git User
+      - name: Configure Git User
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      # Step 6: Commit and Push Changes
+      - name: Commit and Push Changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add .
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m 'Sync mp3 to freshPlayer folder from source repository'
+            git push origin main
+          fi
