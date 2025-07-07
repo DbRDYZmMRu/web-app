@@ -22,46 +22,66 @@ jobs:
       # Step 2: Clone Source Repository
       - name: Clone Source Repository
         run: |
+          echo "Cloning source repository..."
           git clone https://github.com/DbRDYZmMRu/Ut67QIwioF.git source-repo || echo "Failed to clone source repo. Check URL."
+          if [ -d "source-repo" ]; then
+            echo "Source repository cloned successfully."
+          else
+            echo "Source repository clone failed or directory not created."
+            exit 1
+          fi
 
       # Step 3: Debug Source Repository Contents
       - name: List Source Repository Contents
         run: |
           echo "Listing contents of source-repo:"
-          ls -la source-repo || echo "Source repository is empty or not cloned."
+          ls -laR source-repo || echo "Source repository is empty or not cloned."
           if [ -d "source-repo/mp3" ]; then
-            echo "mp3 exists in source-repo."
-            ls -la source-repo/mp3
+            echo "mp3 folder exists in source-repo."
+            ls -laR source-repo/mp3
           else
-            echo "mp3 does not exist in source-repo."
+            echo "mp3 folder does not exist in source-repo."
           fi
 
       # Step 4: Copy mp3 Folder to freshPlayer
       - name: Copy mp3 to freshPlayer
         run: |
+          echo "Creating freshPlayer directory..."
           mkdir -p freshPlayer
           if [ -d "source-repo/mp3" ]; then
-            cp -R source-repo/mp3 freshPlayer/ || echo "No content to copy in mp3 folder."
+            echo "Copying source-repo/mp3 to freshPlayer/mp3..."
+            cp -R source-repo/mp3 freshPlayer/ || echo "Failed to copy mp3 folder contents."
+            echo "Listing contents of freshPlayer after copy:"
+            ls -laR freshPlayer
           else
             echo "mp3 folder not found in source-repo. Skipping copy."
-            exit 1
           fi
 
-      # Step 5: Configure Git User
+      # Step 5: Debug Destination Repository
+      - name: List Destination Repository Contents
+        run: |
+          echo "Listing contents of destination repository root:"
+          ls -laR .
+
+      # Step 6: Configure Git User
       - name: Configure Git User
         run: |
+          echo "Configuring Git user..."
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      # Step 6: Commit and Push Changes
+      # Step 7: Commit and Push Changes
       - name: Commit and Push Changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo "Adding changes to git..."
           git add .
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
+            echo "Committing changes..."
             git commit -m 'Sync mp3 folder to freshPlayer from source repository'
+            echo "Pushing changes..."
             git push origin main
           fi
