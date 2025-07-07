@@ -1,4 +1,4 @@
-name: Sync Content to freshPlayer Folder
+name: Sync Contents to freshPlayer Folder
 
 on:
   push:
